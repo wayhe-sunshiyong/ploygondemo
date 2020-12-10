@@ -1,0 +1,474 @@
+<template>
+  <div class="ploygon clean">
+    <div class="projectList">
+      <p>Project List</p>
+      <ul>
+        <li v-for="i in ploygonNameList2" :key="i.dataId" @click="getMapDataById($event)">{{ i }}</li>
+      </ul>
+    </div>
+    <div class="createProject">
+      <div class="select">
+        Please select state, city, county, school, or custom scope
+      </div>
+      <el-button class="el-button" type="text" @click="open"
+        >Create custom scopes</el-button
+      >
+      <!--  <el-collapse
+        v-model="activeNames"
+        @change="handleChange"
+        class="el-collapse-item"
+      >
+        <el-collapse-item name="2" class="el-collapse-item-country">
+          <template slot="title" class="countryTitle" style="color: red">
+            America
+          </template>
+          <el-collapse-item
+            v-for="(i, index) in states"
+            :key="i"
+            :title="i"
+            :name="index + 1"
+          >
+            <div v-for="(v, index) in counties[index]" :key="index">
+              {{ v }}
+            </div>
+          </el-collapse-item>
+        </el-collapse-item>
+      </el-collapse> -->
+
+      <el-tree
+        :data="data"
+        :props="defaultProps"
+        @node-click="handleNodeClick"
+      ></el-tree>
+
+      <!-- <li class="mingcheng" v-for="i in ploygonNameList" :key="i">
+        <div>{{ i }}</div> -->
+      <!-- <button @click="del(i)">删除</button> -->
+      <!-- </li> -->
+    </div>
+
+    <DrawPolygons></DrawPolygons>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import statesCounties from "../../static/us_states_counties.json";
+import DrawPolygons from "./DrawPolygon/DrawPolygons";
+export default {
+  data() {
+    return {
+      ploygonNameList: [],
+      ploygonNameList2: [],
+
+      activeNames: ["1"],
+      // state: [],
+      statesCounties,
+      countyTurn: {},
+      states: [],
+      counties: [],
+      styleobj: {
+        fontWeight: "bolder",
+      },
+      // result:'',
+
+      data: [
+        {
+          label: "一级 1",
+          children: [
+            {
+              label: "二级 1-1",
+              children: [
+                {
+                  label: "三级 1-1-1",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "一级 2",
+          children: [
+            {
+              label: "二级 2-1",
+              children: [
+                {
+                  label: "三级 2-1-1",
+                },
+              ],
+            },
+            {
+              label: "二级 2-2",
+              children: [
+                {
+                  label: "三级 2-2-1",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "一级 3",
+          children: [
+            {
+              label: "二级 3-1",
+              children: [
+                {
+                  label: "三级 3-1-1",
+                },
+              ],
+            },
+            {
+              label: "二级 3-2",
+              children: [
+                {
+                  label: "三级 3-2-1",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
+    };
+  },
+  methods: {
+    handleNodeClick(data) {
+      console.log(data);
+    },
+
+    open() {
+      this.$nextTick(() => {
+        this.ploygonNameList2 = this.ploygonNameList/* .reverse() */;
+        // this.getMapDataList();
+      });
+      this.$prompt("请输入名称", "提示", {
+        confirmButtonText: "保存",
+        cancelButtonText: "取消",
+        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        // inputErrorMessage: "邮箱格式不正确",
+      })
+        .then(({ value }) => {
+          /* this.$message({
+            type: "success",
+            message: "你的项目名称是: " + value,
+          }); */
+          // this.ploygonNameList = value;
+          // this.ploygonNameList.push(value)
+          if (this.ploygonNameList.indexOf(value) == -1) {
+            /* this.ploygonNameList.push(value);
+            this.$message({
+              type: "success",
+              // message: "你的项目名称是: " + value,
+              // message: confirmButton,
+            }); */
+            axios
+              .post("/zi/collection/api/addMapData", {
+                // params: {
+                name: value,
+                context: "",
+                // }
+              })
+              .then((res) => {
+                if (res.data.url) {
+                  window.location.href = "/zi/app/login";
+                }
+                if (res.status == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "你的项目名称是" + value,
+                  });
+                  // this.ploygonNameList.push(value);
+                }
+                console.log(res);
+                // console.log(JSON.parse(res.config.data).name);
+                this.ploygonNameList.push(JSON.parse(res.config.data).name);
+                // console.log(this.ploygonNameList);
+                this.$nextTick(() => {
+                  this.ploygonNameList2 = this.ploygonNameList;
+                  // this.getMapDataList();
+                });
+              });
+          } else {
+            alert("名称已存在，请换一个名称");
+            // type:"error"
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+
+    /* del(todo) {
+      const index = this.ploygonNameList.findIndex((i) => i.id == todo.id);
+      this.ploygonNameList.splice(index, 1);
+    }, */
+
+    /* open() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    }, */
+
+    handleChange(val) {
+      console.log(val);
+    },
+
+    /* getState() {
+      axios.get('../../static/us_states_counties.json')
+      .then((res) => {
+        console.log(res);
+      })
+    } */
+
+    /* turn() {
+      console.log(1);
+      this.countyTurn = this.statesCounties
+      console.log(this.countyTurn);
+    } */
+
+    /* getStates() {
+      for (let state in this.statesCounties) {
+        this.states.push(state);
+        this.counties.push(this.statesCounties[state]);
+      }
+      // console.log(this.states);
+      console.log(this.counties);
+    }, */
+
+    /* getCounties(i) {
+      for (let b in i) {
+        this.counties.push(i[b]);
+      }
+      console.log(this.counties);
+    }, */
+    getMapDataList() {
+      axios.get("/zi/collection/api/getMapDataList").then((res) => {
+        if (res.data.url) {
+          window.location.href = "/zi/app/login?p=/";
+        }
+        // console.log(res);
+        // console.log(res.data);
+        console.log(res.data.dataInfo);
+        // alert(res)
+
+        for (let i of res.data.dataInfo) {
+          this.ploygonNameList.push(i.name);
+        }
+        // console.log(this.ploygonNameList);
+        this.ploygonNameList2 = this.ploygonNameList.reverse();
+      });
+    },
+
+    /* getMapDataList() {
+      
+    } */
+
+    getMapDataById(e) {
+      console.log(e.target);
+      axios.get('/zi/collection/api/getMapDataById?dataId=',{
+
+      })
+    }
+
+    //这里是methods
+  },
+
+  // watch: {
+  // open() {
+  //   this.$prompt("请输入名称", "提示", {
+  //     confirmButtonText: "保存",
+  //     cancelButtonText: "取消",
+  //     // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+  //     // inputErrorMessage: "邮箱格式不正确",
+  //   })
+  //     .then(({ value }) => {
+  //       /* this.$message({
+  //         type: "success",
+  //         message: "你的项目名称是: " + value,
+  //       }); */
+  //       // this.ploygonNameList = value;
+  //       // this.ploygonNameList.push(value)
+  //       if (this.ploygonNameList.indexOf(value) == -1) {
+  //         /* this.ploygonNameList.push(value);
+  //         this.$message({
+  //           type: "success",
+  //           // message: "你的项目名称是: " + value,
+  //           // message: confirmButton,
+  //         }); */
+  //         axios
+  //           .post("http://52.83.173.80/zi/collection/api/addMapData", {
+  //             // params: {
+  //             name: value,
+  //             context: "",
+  //             // }
+  //           })
+  //           .then((res) => {
+  //             if (res.status == 200) {
+  //               this.$message({
+  //                 type: "success",
+  //                 message: "你的项目名称是" + value,
+  //               });
+  //               // this.ploygonNameList.push(value);
+  //             }
+  //             // console.log(res);
+  //           });
+  //       } else {
+  //         alert("名称已存在，请换一个名称");
+  //         // type:"error"
+  //       }
+  //     })
+  //     .catch(() => {
+  //       this.$message({
+  //         type: "info",
+  //         message: "取消输入",
+  //       });
+  //     });
+  // },
+
+  /* getMapDataList() {
+      axios
+        .get("http://52.83.173.80/zi/collection/api/getMapDataList")
+        .then((res) => {
+          console.log(res);
+          // console.log(res.data);
+          console.log(res.data.dataInfo);
+          // alert(res)
+
+          for (let i of res.data.dataInfo) {
+            this.ploygonNameList.push(i.name);
+          }
+          console.log(this.ploygonNameList);
+        });
+    }, */
+
+  //watch
+  // },
+  mounted() {
+    // this.getState()
+    // this.turn()
+    // console.log()
+    /* for (let states in this.statesCounties) {
+        console.log(states)
+    } */
+    // this.getStates();
+    // this.getCounties();
+    this.getMapDataList();
+    // this.$nextTick()
+  },
+
+  components: {
+    DrawPolygons,
+  },
+};
+</script>
+
+<style>
+.el-row {
+  margin-bottom: 20px;
+  /* &:last-child {
+    margin-bottom: 0;
+  } */
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+
+.createProject {
+  /* float:left; */
+  position: absolute;
+  left: 40px;
+  bottom: 10px;
+  /* color: white; */
+
+  width: 17vw;
+  height: 50vh;
+  /* text-align: center; */
+  /* margin:0 auto; */
+  background: aliceblue;
+}
+
+.createProject .el-button {
+  color: black;
+  /* background: rgba(0, 255, 242, 0.514); */
+  background: white;
+  padding: 5px;
+  border-radius: 10px;
+  /* position:absolute; */
+  /* left:0;
+  right:0; */
+  /* margin:0 auto; */
+  /* position: relative; */
+  /* left: -92px; */
+  margin-top: 30px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.drawPolygons {
+  float: right;
+}
+
+.el-collapse-item-country {
+  height: 40vh;
+  /* background: aquamarine; */
+  overflow: auto;
+  /* color: ; */
+  /* font-weight: bolder; */
+}
+
+.el-collapse {
+  color: black;
+  /* font-weight: bolder; */
+}
+
+.projectList {
+  float: left;
+  margin-left: 80px;
+  height: 40vh;
+  width: 20vh;
+  background: aliceblue;
+  overflow: auto;
+}
+
+.el-collapse-item-country .countryTitle {
+  font-weight: bolder;
+}
+</style>
