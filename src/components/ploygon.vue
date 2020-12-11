@@ -3,7 +3,14 @@
     <div class="projectList">
       <p>Project List</p>
       <ul>
-        <li v-for="i in ploygonNameList2" :key="i.dataId" @click="getMapDataById($event)">{{ i }}</li>
+        <!-- <li v-for="i in ploygonNameList2" :key="i.dataId" @click="getMapDataById($event)">{{ i }}</li> -->
+        <li
+          v-for="i in ploygonList2"
+          :key="i.dataId"
+          @click="getMapDataById(i)"
+        >
+          <span>{{ i.name }}</span>
+        </li>
       </ul>
     </div>
     <div class="createProject">
@@ -46,8 +53,9 @@
       <!-- <button @click="del(i)">删除</button> -->
       <!-- </li> -->
     </div>
-
-    <DrawPolygons></DrawPolygons>
+    <div>
+      <DrawPolygons :mapData="mapDataCon" :dataIDs="dataID"></DrawPolygons>
+    </div>
   </div>
 </template>
 
@@ -60,6 +68,17 @@ export default {
     return {
       ploygonNameList: [],
       ploygonNameList2: [],
+      ploygonList: [],
+      ploygonList2: [],
+      mapDataCon: "",
+      mapDataCon2: "",
+      mapDataCon3: [
+        [116.38858451842788, 39.92073844940944],
+        [116.38927116393643, 39.907703585565855],
+        [116.40781059264708, 39.90849364793152],
+        [116.38858451842788, 39.92073844940944],
+      ],
+      dataID: "",
 
       activeNames: ["1"],
       // state: [],
@@ -142,7 +161,8 @@ export default {
 
     open() {
       this.$nextTick(() => {
-        this.ploygonNameList2 = this.ploygonNameList/* .reverse() */;
+        // this.ploygonNameList2 = this.ploygonNameList/* .reverse() */; //--
+        this.ploygonList2 = this.ploygonList;
         // this.getMapDataList();
       });
       this.$prompt("请输入名称", "提示", {
@@ -158,6 +178,7 @@ export default {
           }); */
           // this.ploygonNameList = value;
           // this.ploygonNameList.push(value)
+
           if (this.ploygonNameList.indexOf(value) == -1) {
             /* this.ploygonNameList.push(value);
             this.$message({
@@ -183,12 +204,17 @@ export default {
                   });
                   // this.ploygonNameList.push(value);
                 }
-                console.log(res);
+                // console.log(res);
                 // console.log(JSON.parse(res.config.data).name);
-                this.ploygonNameList.push(JSON.parse(res.config.data).name);
+                // console.log(res.config.data);
+                // console.log(JSON.parse(res.config.data));
+                // console.log(typeof(res.config.data));
+                this.ploygonNameList.push(JSON.parse(res.config.data).name); //--
+                this.ploygonList.push(JSON.parse(res.config.data));
                 // console.log(this.ploygonNameList);
                 this.$nextTick(() => {
-                  this.ploygonNameList2 = this.ploygonNameList;
+                  // this.ploygonNameList2 = this.ploygonNameList; //--
+                  this.ploygonList2 = this.ploygonList;
                   // this.getMapDataList();
                 });
               });
@@ -263,33 +289,63 @@ export default {
       console.log(this.counties);
     }, */
     getMapDataList() {
+        // console.log(this.featureIds);
+
       axios.get("/zi/collection/api/getMapDataList").then((res) => {
         if (res.data.url) {
           window.location.href = "/zi/app/login?p=/";
         }
         // console.log(res);
         // console.log(res.data);
-        console.log(res.data.dataInfo);
+        // console.log(res.data.dataInfo);
         // alert(res)
 
         for (let i of res.data.dataInfo) {
-          this.ploygonNameList.push(i.name);
+          this.ploygonNameList.push(i.name); //--
+          this.ploygonList.push(i);
+          // console.log(typeof(i));
         }
         // console.log(this.ploygonNameList);
-        this.ploygonNameList2 = this.ploygonNameList.reverse();
+        // this.ploygonNameList2 = this.ploygonNameList.reverse(); //--
+        this.ploygonList2 = this.ploygonList.reverse();
+        // console.log(this.ploygonList2);
+        /* for(let i of this.ploygonList2) {
+          console.log(i.name);
+        } */
       });
+
+
+      /* if(this.mapDataCon.length == 0) {
+            this.mapDataCon = '{"type":"FeatureCollection","features":[{"id":"26629ac106cd0b3c5b20b83856fac9f3","type":"Feature","properties":{},"geometry":{"coordinates":[[[116.41493453979638,39.916262109191734],[116.39828338623221,39.90098768757869],[116.43175735473784,39.90164613805547],[116.41493453979638,39.916262109191734]]],"type":"Polygon"}}]}'
+          } */
     },
 
     /* getMapDataList() {
       
     } */
 
-    getMapDataById(e) {
-      console.log(e.target);
-      axios.get('/zi/collection/api/getMapDataById?dataId=',{
-
-      })
-    }
+    getMapDataById(i) {
+      // console.log(i.id);
+      // let id = i.id
+      this.dataID = i.id;
+      // console.log(this.dataID);
+      axios
+        .get("/zi/collection/api/getMapDataById?dataId=" + i.id)
+        .then((res) => {
+          // console.log(res);
+          // console.log(typeof(res.data.dataInfo.context));
+          this.mapDataCon = res.data.dataInfo.context;
+          // console.log(typeof(this.mapDataCon));
+          console.log(res.data.dataName);
+          // console.log(this.mapDataCon);
+          // console.log(this.dataID);
+          // console.log(typeof(this.mapDataCon));
+          /* if(this.mapDataCon.length == 0) {
+            this.mapDataCon = '{"type":"FeatureCollection","features":[{"id":"26629ac106cd0b3c5b20b83856fac9f3","type":"Feature","properties":{},"geometry":{"coordinates":[[[116.41493453979638,39.916262109191734],[116.39828338623221,39.90098768757869],[116.43175735473784,39.90164613805547],[116.41493453979638,39.916262109191734]]],"type":"Polygon"}}]}'
+          } */
+          // console.log(this.mapDataCon);
+        });
+    },
 
     //这里是methods
   },
@@ -375,6 +431,8 @@ export default {
     // this.getCounties();
     this.getMapDataList();
     // this.$nextTick()
+
+
   },
 
   components: {
