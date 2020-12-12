@@ -7,10 +7,18 @@
         <li
           v-for="i in ploygonList2"
           :key="i.dataId"
+          @click="getMapDataById(i);"
+        >
+          <span>{{ i.name }}</span>
+          <!-- <span @click="upDateMapDataName(i.id)">rename</span> -->
+        </li>
+        <!-- <li
+          v-for="i in ploygonList2"
+          :key="i.dataId"
           @click="getMapDataById(i)"
         >
           <span>{{ i.name }}</span>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div class="createProject">
@@ -53,9 +61,9 @@
       <!-- <button @click="del(i)">删除</button> -->
       <!-- </li> -->
     </div>
-    <div>
-      <DrawPolygons :mapData="mapDataCon" :dataIDs="dataID"></DrawPolygons>
-    </div>
+    <!-- <div> -->
+      <DrawPolygons :mapData="mapDataCon" :dataIDs="dataID" ref="myChild"></DrawPolygons>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -155,6 +163,50 @@ export default {
     };
   },
   methods: {
+    /* upDateMapDataName() {
+        this.$prompt('rename', 'Prompt', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+          // inputErrorMessage: '邮箱格式不正确'
+        }).then(({ value }) => {
+          this.$message({
+            type: 'success',
+            message: 'Project name: ' + value
+          });
+
+          if(this.ploygonNameList.indexOf(value) == -1) {
+            axios.post('this.ploygonNameList.indexOf(value) == -1')
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Cancel changes'
+          });       
+        });
+      }, */
+
+
+
+
+    drawGraph() {
+      /* let that = this;
+      that.$nextTick(function() {
+        console.log(that.$refs.myChild.DrawPolygons());
+      }) */
+
+      this.$nextTick(function() {
+        this.$refs.myChild.descPloygon()
+      })
+      
+      /* setTimeout(() => {
+        // this.$refs.myChild.DrawPolygons()
+        console.log(this.$refs.myChild.descPloygon());
+      }, 10); */
+
+      // console.log(1);
+    },
+    
     handleNodeClick(data) {
       console.log(data);
     },
@@ -216,6 +268,7 @@ export default {
                   // this.ploygonNameList2 = this.ploygonNameList; //--
                   this.ploygonList2 = this.ploygonList;
                   // this.getMapDataList();
+                  console.log(this.ploygonList2);
                 });
               });
           } else {
@@ -344,6 +397,7 @@ export default {
             this.mapDataCon = '{"type":"FeatureCollection","features":[{"id":"26629ac106cd0b3c5b20b83856fac9f3","type":"Feature","properties":{},"geometry":{"coordinates":[[[116.41493453979638,39.916262109191734],[116.39828338623221,39.90098768757869],[116.43175735473784,39.90164613805547],[116.41493453979638,39.916262109191734]]],"type":"Polygon"}}]}'
           } */
           // console.log(this.mapDataCon);
+          this.drawGraph()
         });
     },
 
@@ -524,6 +578,21 @@ export default {
   width: 20vh;
   background: aliceblue;
   overflow: auto;
+}
+
+.projectList ul li{
+  padding-top: 5px;
+  background: #99a9bf;
+  border: solid 1px;
+}
+
+.projectList ul li span:first-child{
+  padding-right: 15px;
+}
+
+.projectList ul li span:nth-child(2){
+  background: antiquewhite;
+  float: left;
 }
 
 .el-collapse-item-country .countryTitle {

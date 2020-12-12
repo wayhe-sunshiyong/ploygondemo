@@ -6,6 +6,20 @@
       <div id="calculated-area"></div>
     </div>
     <div class="save" @click="upDateMapData(descDataIDs)">保存</div>
+    <!-- <p
+      style="
+        background: white;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 500px;
+        height: 300px;
+        display: none;
+      "
+    >
+      {{ descDataIDs }}---{{ descMapData }}---{{ descPloygon }}
+    </p> -->
+
     <p
       style="
         background: white;
@@ -19,6 +33,11 @@
     >
       {{ descDataIDs }}---{{ descMapData }}---{{ descPloygon }}
     </p>
+    <!-- <keep-alive>
+      <p>
+        {{ descPloygon }}
+      </p>
+    </keep-alive> -->
   </div>
 </template>
 
@@ -162,6 +181,8 @@ export default {
     // console.log(this.dataID);
     // console.log(this.descDataIDs);
 
+    // this.descPloygon()
+
     //mounted
   },
 
@@ -172,13 +193,99 @@ export default {
       // console.log(this.dataIDs);
     },
     descMapData() {
-      // return this.mapData;
-      return console.log(this.mapData);
+      return this.mapData;
+      // this.descPloygon()
+      // return console.log(this.mapData);
     },
+    // descPloygon() {
+    //   // this.featureIds = []
+
+    //   if (this.mapData.length != 0) {
+    //     let mapDataS = JSON.parse(this.mapData);
+    //     console.log(mapDataS);
+    //     // this.featureIds.push(this.draw.add(this.mapData))
+    //     // this.featureIds = ''
+    //     this.draw.deleteAll();
+    //     mapDataS.features.forEach((element) => {
+    //       // console.log(element)
+    //       this.featureIds.push(this.draw.add(element));
+    //     });
+    //     // console.log(this.featureIds);
+    //     // this.draw.deleteAll()
+
+    //     // console.log(this.featureIds)
+    //     /* for(let i of mapDataS.features) {
+    //       // this.featureIds.push(i)
+    //       // this.featureIds = this.draw.add(i)
+    //       this.featureIds.push(this.draw.add(i))
+    //     } */
+    //   } else {
+        
+    //     // let mapDataS = JSON.parse('{"type":"FeatureCollection","features":[{"id":"26629ac106cd0b3c5b20b83856fac9f3","type":"Feature","properties":{},"geometry":{"coordinates":[[[116.41493453979638,39.916262109191734],[116.39828338623221,39.90098768757869],[116.43175735473784,39.90164613805547],[116.41493453979638,39.916262109191734]]],"type":"Polygon"}}]}');
+    //     // console.log(mapDataS);
+    //     // // this.featureIds.push(this.draw.add(this.mapData))
+    //     // // this.featureIds = ''
+    //     // this.draw.deleteAll();
+    //     // mapDataS.features.forEach((element) => {
+    //     //   // console.log(element)
+    //     //   this.featureIds.push(this.draw.add(element));
+    //     // });
+        
+    //     console.log("mapData数据为空");
+    //     /* let mapDataS = JSON.parse(this.mapData);
+    //     console.log(mapDataS); */
+    //     // console.log(this.featureIds);
+
+    //     // this.draw.deleteAll();
+    //     // return 1
+    //   }
+
+
+
+
+      
+    //   /* let mapDataS = JSON.parse(this.mapData);
+    //   // console.log(typeof(mapDataS.features[0].id));
+    //   if(mapDataS.features[0].id == '26629ac106cd0b3c5b20b83856fac9f3'){
+    //       // let mapDataS = JSON.parse(this.mapData);
+        
+    //     this.draw.deleteAll();
+    //     mapDataS.features.forEach((element) => {
+    //       // console.log(element)
+    //       this.featureIds.push(this.draw.add(element));
+    //     });
+    //   } */
+
+
+
+    //   // console.log(1);
+    //   // return this.featureIds;
+    //   return 1;
+    //   // return console.log(1);
+    // },
+  },
+
+  /*  watch: {
+
+  } */
+
+  /* activated() {
+    this.descPloygon()
+  }, */
+
+  methods: {
+    /* getMapDataByIds() {
+      this.$emit('getMapDataById')
+
+    }, */
+
+
     descPloygon() {
       // this.featureIds = []
 
       if (this.mapData.length != 0) {
+        // this.mapData2 = this.mapData;
+        // console.log(this.mapData2);
         let mapDataS = JSON.parse(this.mapData);
         // console.log(mapDataS);
         // this.featureIds.push(this.draw.add(this.mapData))
@@ -198,8 +305,14 @@ export default {
           this.featureIds.push(this.draw.add(i))
         } */
       } else {
+        // this.initMap()
+        // console.log(this.initMap());
         
-        /* let mapDataS = JSON.parse(this.mapData);
+
+        this.draw.deleteAll()
+        
+        
+        /* let mapDataS = JSON.parse('{"type":"FeatureCollection","features":[{"id":"26629ac106cd0b3c5b20b83856fac9f3","type":"Feature","properties":{},"geometry":{"coordinates":[[[116.41493453979638,39.916262109191734],[116.39828338623221,39.90098768757869],[116.43175735473784,39.90164613805547],[116.41493453979638,39.916262109191734]]],"type":"Polygon"}}]}');
         // console.log(mapDataS);
         // this.featureIds.push(this.draw.add(this.mapData))
         // this.featureIds = ''
@@ -208,8 +321,12 @@ export default {
           // console.log(element)
           this.featureIds.push(this.draw.add(element));
         }); */
+         
         
         console.log("mapData数据为空");
+        /* set: function () {
+          this.featureIds = []
+        } */
         /* let mapDataS = JSON.parse(this.mapData);
         console.log(mapDataS); */
         // console.log(this.featureIds);
@@ -221,18 +338,35 @@ export default {
 
 
 
-      
-      /* let mapDataS = JSON.parse(this.mapData);
-      // console.log(typeof(mapDataS.features[0].id));
-      if(mapDataS.features[0].id == '26629ac106cd0b3c5b20b83856fac9f3'){
-          // let mapDataS = JSON.parse(this.mapData);
+      // console.log(this.mapData);
+      // let mapDataS = JSON.parse(this.mapData);
+      // console.log(mapDataS);
+      // // console.log(typeof(mapDataS.features[0].id));
+      // if(mapDataS.features[0].id == '26629ac106cd0b3c5b20b83856fac9f3'){
+      //     // let mapDataS = JSON.parse(this.mapData);
         
-        this.draw.deleteAll();
-        mapDataS.features.forEach((element) => {
-          // console.log(element)
-          this.featureIds.push(this.draw.add(element));
-        });
-      } */
+        
+      //   mapDataS.features.forEach((element) => {
+      //     // console.log(element)
+      //     this.featureIds.push(this.draw.add(element));
+      //   });
+      //   // this.draw.deleteAll();
+
+      // }else{
+      //   //  let mapDataS = JSON.parse(this.mapData);
+      //   // console.log(mapDataS);
+      //   // this.featureIds.push(this.draw.add(this.mapData))
+      //   // this.featureIds = ''
+      //   // this.draw.deleteAll();
+      //   mapDataS.features.forEach((element) => {
+      //     // console.log(element)
+      //     this.featureIds.push(this.draw.add(element));
+      //   });
+      //   // console.log(this.featureIds);
+      //   // this.draw.deleteAll()
+      //   console.log('你好');
+      //   // console.log(this.featureIds)
+      // }
 
 
 
@@ -241,17 +375,15 @@ export default {
       return 1;
       // return console.log(1);
     },
-  },
 
-  /*  watch: {
 
-  } */
 
-  methods: {
-    /* getMapDataByIds() {
-      this.$emit('getMapDataById')
 
-    }, */
+
+
+
+
+
     updateArea(e) {
       this.mapDataCon = this.draw.getAll();
       console.log(this.mapDataCon);
