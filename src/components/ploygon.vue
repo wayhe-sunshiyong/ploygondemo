@@ -5,12 +5,13 @@
       <ul>
         <!-- <li v-for="i in ploygonNameList2" :key="i.dataId" @click="getMapDataById($event)">{{ i }}</li> -->
         <li
-          v-for="i in ploygonList2"
+          v-for="i in ploygonList"
           :key="i.dataId"
           @click="getMapDataById(i);"
         >
           <span>{{ i.name }}</span>
-          <!-- <span @click="upDateMapDataName(i.id)">rename</span> -->
+          <span @click="upDateMapDataName(i.id)">rename</span>
+
         </li>
         <!-- <li
           v-for="i in ploygonList2"
@@ -77,7 +78,7 @@ export default {
       ploygonNameList: [],
       ploygonNameList2: [],
       ploygonList: [],
-      ploygonList2: [],
+      // ploygonList2: [],
       mapDataCon: "",
       mapDataCon2: "",
       mapDataCon3: [
@@ -162,11 +163,53 @@ export default {
       },
     };
   },
+  // computed: {
+  //   upDateMapDataName(v) {
+  //     // console.log(v);
+  //       this.$prompt('rename', 'Prompt', {
+  //         confirmButtonText: 'save',
+  //         cancelButtonText: 'cancel',
+  //         // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+  //         // inputErrorMessage: '邮箱格式不正确'
+  //       }).then(({ value }) => {
+  //         this.$message({
+  //           type: 'success',
+  //           message: 'Project name: ' + value
+  //         });
+
+  //         if(this.ploygonNameList.indexOf(value) == -1) {
+  //           axios.post('/zi/collection/api/updateMapDataById',{
+  //             dataId:v,
+  //             name:value,
+  //           })
+  //           .then((res) => {
+  //             console.log(res);
+  //             // this.getMapDataList()
+  //             this.ploygonNameList2 = this.ploygonNameList
+  //             // this.$nextTick(() => {this.ploygonNameList2 = this.ploygonNameList})
+  //           })
+  //         } else {
+  //           alert("The name already exists, please change it");
+            
+  //         }
+  //       }).catch(() => {
+  //         this.$message({
+  //           type: 'info',
+  //           message: 'Cancel changes'
+  //         });       
+  //       });
+  //       return 1
+  //     }
+      
+  
+  //computed
+  // },
   methods: {
-    /* upDateMapDataName() {
+    upDateMapDataName(v) {
+      // console.log(v);
         this.$prompt('rename', 'Prompt', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+          confirmButtonText: 'save',
+          cancelButtonText: 'cancel',
           // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
           // inputErrorMessage: '邮箱格式不正确'
         }).then(({ value }) => {
@@ -176,7 +219,19 @@ export default {
           });
 
           if(this.ploygonNameList.indexOf(value) == -1) {
-            axios.post('this.ploygonNameList.indexOf(value) == -1')
+            axios.post('/zi/collection/api/updateMapDataById',{
+              dataId:v,
+              name:value,
+            })
+            .then((res) => {
+              console.log(res);
+              this.getMapDataList()
+              // this.ploygonNameList2 = this.ploygonNameList
+              // this.$nextTick(() => {this.ploygonNameList2 = this.ploygonNameList})
+            })
+          } else {
+            alert("The name already exists, please change it");
+            
           }
         }).catch(() => {
           this.$message({
@@ -184,7 +239,7 @@ export default {
             message: 'Cancel changes'
           });       
         });
-      }, */
+      },
 
 
 
@@ -212,14 +267,14 @@ export default {
     },
 
     open() {
-      this.$nextTick(() => {
-        // this.ploygonNameList2 = this.ploygonNameList/* .reverse() */; //--
-        this.ploygonList2 = this.ploygonList;
-        // this.getMapDataList();
-      });
-      this.$prompt("请输入名称", "提示", {
-        confirmButtonText: "保存",
-        cancelButtonText: "取消",
+      // this.$nextTick(() => {
+      //   // this.ploygonNameList2 = this.ploygonNameList/* .reverse() */; //--
+      //   this.ploygonList2 = this.ploygonList;
+      //   // this.getMapDataList();
+      // });
+      this.$prompt("Please enter the name", "Prompt", {
+        confirmButtonText: "save",
+        cancelButtonText: "cancel",
         // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
         // inputErrorMessage: "邮箱格式不正确",
       })
@@ -252,7 +307,7 @@ export default {
                 if (res.status == 200) {
                   this.$message({
                     type: "success",
-                    message: "你的项目名称是" + value,
+                    message: "Project name:" + value,
                   });
                   // this.ploygonNameList.push(value);
                 }
@@ -264,15 +319,15 @@ export default {
                 this.ploygonNameList.push(JSON.parse(res.config.data).name); //--
                 this.ploygonList.push(JSON.parse(res.config.data));
                 // console.log(this.ploygonNameList);
-                this.$nextTick(() => {
-                  // this.ploygonNameList2 = this.ploygonNameList; //--
-                  this.ploygonList2 = this.ploygonList;
-                  // this.getMapDataList();
-                  console.log(this.ploygonList2);
-                });
+                // this.$nextTick(() => {
+                //   // this.ploygonNameList2 = this.ploygonNameList; //--
+                //   this.ploygonList2 = this.ploygonList;
+                //   // this.getMapDataList();
+                //   // console.log(this.ploygonList2);
+                // });
               });
           } else {
-            alert("名称已存在，请换一个名称");
+            alert("The name already exists, please change it");
             // type:"error"
           }
         })
@@ -343,7 +398,8 @@ export default {
     }, */
     getMapDataList() {
         // console.log(this.featureIds);
-
+        this.ploygonNameList = []
+        this.ploygonList = []
       axios.get("/zi/collection/api/getMapDataList").then((res) => {
         if (res.data.url) {
           window.location.href = "/zi/app/login?p=/";
@@ -354,13 +410,15 @@ export default {
         // alert(res)
 
         for (let i of res.data.dataInfo) {
+          // this.ploygonNameList = []
+          // this.ploygonList = []
           this.ploygonNameList.push(i.name); //--
           this.ploygonList.push(i);
           // console.log(typeof(i));
         }
         // console.log(this.ploygonNameList);
         // this.ploygonNameList2 = this.ploygonNameList.reverse(); //--
-        this.ploygonList2 = this.ploygonList.reverse();
+        this.ploygonList = this.ploygonList.reverse();
         // console.log(this.ploygonList2);
         /* for(let i of this.ploygonList2) {
           console.log(i.name);
